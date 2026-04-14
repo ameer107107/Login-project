@@ -4,7 +4,7 @@ import bcrypt
 with open("../data.json","r") as file:
     data = json.load(file)
 
-
+risk = 0
 
 # function
 def Block():
@@ -32,76 +32,69 @@ def create_user(username, email, phone, password, file_path):
 
     save_user({"user": user}, file_path)
 
+def calculate_risk(risk,user_name,check_name,login_failed,attempts):
+    if not bcrypt.checkpw(check_password, user_password):
+        risk += 3
 
+    if user_name != check_name:
+        risk += 2
+
+    if login_failed > 2:
+        risk += 1
+
+    if attempts > 3:
+        risk += 1
+    return risk
+
+def make_decision(risk):
+
+    if risk >=10:
+        print("Blocked ⛔")
+        Block()
+
+    elif risk >=5:
+        print("OTP Required 🔐")
+
+    else:
+        print("Normal ✅")
 
 
 
 # user info from the UI
 input_User={
+
     "user_name":"karar123",
     "user_email":"karar554@gmail.com",
     "user_phone":"+9647779830399",
     "user_password":"1234567",
+
 }
 
-risk = 0
 
 # input info
 check_name = input_User["user_name"]
 check_password = input_User["user_password"].encode()
+
+
 
 # data info
 user_name = data["user"]["username"]
 user_password = data["user"]["password"].encode()
 user_active = data["user"]["account_status"]
 
+
+
 # activity info
 login_failed = data["login_activity"]["failed_attempts"]
 attempts = data["login_activity"]["total_attempts"]
-
-
-if bcrypt.checkpw(check_password, user_password):
-    print("Login success ✅")
-else:
-    print("Wrong password ❌")
-
-
 
 
 
 # info test
 if user_active:
 
-    if user_name != check_name:
-        risk +=0.1
+    risk = calculate_risk(risk,user_name,check_name,login_failed,attempts)
+    make_decision(risk)
 
-    if not bcrypt.checkpw(check_password, user_password):
-        risk +=0.2
-
-    if login_failed > 2:
-        risk +=0.5
-
-    if attempts > 3:
-        risk +=0.3
-
-    # The decisions
-    if login_failed >= 5:
-        print("you have blocked ⛔ (Too many failed attempts)")
-        Block()
-
-    elif user_name != check_name and login_failed >= 3 :
-        print("you have blocked ⛔ (Suspicious behavior)")
-        Block()
-
-    elif risk >=0.8:
-        print("Blocked ⛔")
-        Block()
-
-    elif risk >=0.5:
-        print("OTP Required 🔐")
-
-
-    else:
-        print("Normal ✅")
 else:
     print("you have been blocked contact support for help 🔐")

@@ -4,7 +4,7 @@
         "email": "karar554@gmail.com",
         "phone": "+9647779830399",
         "password": "$2b$12$Xjyb19K74jjCxEHlfDO8ruvAxwGnYAc/h37FzaddStr4HIK.5harO",
-        "account_status": false
+        "account_status": true
     },
     "login_activity": {
         "total_attempts": 5,
