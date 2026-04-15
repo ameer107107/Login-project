@@ -12,6 +12,7 @@ def Block():
     with open("../data.json", "w") as file:
         json.dump(data, file, indent=4)
 
+
 def hash_password(password):
     return bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
 
@@ -32,6 +33,7 @@ def create_user(username, email, phone, password, file_path):
 
     save_user({"user": user}, file_path)
 
+
 def calculate_risk(risk,user_name,check_name,login_failed,attempts):
     if not bcrypt.checkpw(check_password, user_password):
         risk += 3
@@ -39,12 +41,13 @@ def calculate_risk(risk,user_name,check_name,login_failed,attempts):
     if user_name != check_name:
         risk += 2
 
-    if login_failed > 2:
+    if login_failed >= 3:
         risk += 1
 
-    if attempts > 3:
+    if attempts >= 5:
         risk += 1
     return risk
+
 
 def make_decision(risk):
 
