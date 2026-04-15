@@ -17,12 +17,12 @@ def hash_password(password):
     return bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
 
 
-def save_user(user, file_path):
-    with open(file_path, "w") as f:
+def save_user(user):
+    with open("../data.json", "w") as f:
         json.dump(user, f, indent=4)
 
 
-def create_user(username, email, phone, password, file_path):
+def create_user(username, email, phone, password):
     user = {
         "username": username,
         "email": email,
@@ -31,7 +31,7 @@ def create_user(username, email, phone, password, file_path):
         "account_status": True
     }
 
-    save_user({"user": user}, file_path)
+    save_user({"user": user})
 
 
 def calculate_risk(risk,user_name,check_name,login_failed,attempts):
