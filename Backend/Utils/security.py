@@ -4,11 +4,15 @@ import bcrypt
 with open("../data.json","r") as file:
     data = json.load(file)
 
-risk = 0
 
 # function
-def Block():
+def block():
     data["user"]["account_status"] = False
+    with open("../data.json", "w") as file:
+        json.dump(data, file, indent=4)
+
+def remove_block():
+    data["user"]["account_status"] = True
     with open("../data.json", "w") as file:
         json.dump(data, file, indent=4)
 
@@ -34,26 +38,42 @@ def create_user(username, email, phone, password):
     save_user({"user": user})
 
 
-def calculate_risk(risk,user_name,check_name,login_failed,attempts):
-    if not bcrypt.checkpw(check_password, user_password):
-        risk += 3
+def calculate_risk(user_name,check_name,password_result
+                   ,login_failed,attempts):
+    risk = 0
+    if not password_result:
+        risk += 5
 
     if user_name != check_name:
+        risk += 1
+
+    if login_failed <= 2:
+        risk += 0
+
+    elif login_failed <= 5:
         risk += 2
 
-    if login_failed >= 3:
+    else:
+        risk += 4
+
+    if attempts <= 3:
+        risk += 0
+
+    elif attempts <= 4:
         risk += 1
 
-    if attempts >= 5:
-        risk += 1
+    else:
+        risk += 3
+
+
     return risk
 
 
 def make_decision(risk):
 
-    if risk >=10:
+    if risk >=8:
         print("Blocked ⛔")
-        Block()
+        block()
 
     elif risk >=5:
         print("OTP Required 🔐")
@@ -91,13 +111,13 @@ user_active = data["user"]["account_status"]
 login_failed = data["login_activity"]["failed_attempts"]
 attempts = data["login_activity"]["total_attempts"]
 
-
+password_result = bcrypt.checkpw(check_password, user_password)
 
 # info test
-if user_active:
-
-    risk = calculate_risk(risk,user_name,check_name,login_failed,attempts)
-    make_decision(risk)
+if not user_active:
+    print("you have been blocked contact support for help 🔐")
 
 else:
-    print("you have been blocked contact support for help 🔐")
+    risk = calculate_risk(user_name, check_name, password_result, login_failed, attempts)
+    make_decision(risk)
+    print(risk)
