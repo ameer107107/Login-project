@@ -5,25 +5,39 @@ with open("../data.json","r") as file:
     data = json.load(file)
 
 
+
 # function
+
+
+def save_data():
+    with open("../data.json","w") as file:
+        json.dump(data, file, indent=4)
+
+
+def rest_attempt():
+    data["login_activity"]["failed_attempts"] = 0
+
+
+def faild_attempt():
+    data["login_activity"]["failed_attempts"] += 1
+    data["login_activity"]["total_attempts"] += 1
+
+def successful_attempt():
+    data["login_activity"]["successful_attempts"] += 1
+    data["login_activity"]["total_attempts"] += 1
+
+
 def block():
     data["user"]["account_status"] = False
-    with open("../data.json", "w") as file:
-        json.dump(data, file, indent=4)
+    save_data()
 
 def remove_block():
     data["user"]["account_status"] = True
-    with open("../data.json", "w") as file:
-        json.dump(data, file, indent=4)
+    save_data()
 
 
 def hash_password(password):
     return bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
-
-
-def save_user(user):
-    with open("../data.json", "w") as f:
-        json.dump(user, f, indent=4)
 
 
 def create_user(username, email, phone, password):
@@ -34,8 +48,9 @@ def create_user(username, email, phone, password):
         "password": hash_password(password),
         "account_status": True
     }
+    data["user"] = user
 
-    save_user({"user": user})
+    save_data()
 
 
 def calculate_risk(user_name,check_name,password_result
@@ -43,9 +58,11 @@ def calculate_risk(user_name,check_name,password_result
     risk = 0
     if not password_result:
         risk += 5
+        faild_attempt()
 
     if user_name != check_name:
         risk += 1
+        faild_attempt()
 
     if login_failed <= 2:
         risk += 0
@@ -79,8 +96,9 @@ def make_decision(risk):
         print("OTP Required 🔐")
 
     else:
-        print("Normal ✅")
-
+        print("succeeded ✅")
+        rest_attempt()
+        successful_attempt()
 
 
 # user info from the UI
