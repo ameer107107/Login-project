@@ -16,15 +16,18 @@ def save_data():
 
 def rest_attempt():
     data["login_activity"]["failed_attempts"] = 0
+    save_data()
 
 
 def faild_attempt():
     data["login_activity"]["failed_attempts"] += 1
     data["login_activity"]["total_attempts"] += 1
+    save_data()
 
 def successful_attempt():
     data["login_activity"]["successful_attempts"] += 1
     data["login_activity"]["total_attempts"] += 1
+    save_data()
 
 
 def block():
