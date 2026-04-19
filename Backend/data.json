@@ -7,25 +7,8 @@
         "account_status": true
     },
     "login_activity": {
-        "total_attempts": 5,
-        "failed_attempts": 3,
-        "successful_attempts": 2,
-        "attempts": [
-            {
-                "password_correct": false
-            },
-            {
-                "password_correct": false
-            },
-            {
-                "password_correct": true
-            },
-            {
-                "password_correct": false
-            },
-            {
-                "password_correct": true
-            }
-        ]
+        "total_attempts": 1,
+        "failed_attempts": 0,
+        "successful_attempts": 1
     }
 }

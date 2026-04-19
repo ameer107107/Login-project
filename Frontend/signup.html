@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.2.0/css/line.css">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="signup.css">
     <title>Login Page</title>
 </head>
 <body>
@@ -13,8 +13,18 @@
         <div class="forms">
 
             <div class="form login">
-                <span class="title">Login</span>
+                <span class="title">Registration</span>
                 <form action="#">
+
+                   <div class="input-field">
+                     <input type="text" placeholder= "Enter your first name" required>
+                    <i class="uil uil-user"></i>
+                   </div>
+
+                   <div class="input-field">
+                     <input type="text" placeholder= "Enter your last name" required>
+                    <i class="uil uil-user"></i>
+                   </div>
 
                    <div class="input-field">
                      <input type="text" placeholder= "Enter your email" required>
@@ -27,17 +37,17 @@
                     <i class="uil uil-eye-slash ShowHidePw"></i>
                    </div>
 
-                  <div class="input-field button">
-                        <button type="button" class="btn" onclick="window.location.href='signup.html'">
-                        Login Now
+                   <div class="input-field button">
+                   <button type="button" class="btn" onclick="window.location.href='./otp.html'">
+                        Signup Now
                         </button> 
-                 </div>
+                   </div>
 
                 </form>
 
                 <div class="login-signup">
-                    <span class="text">Not a member ?
-                        <a href="./signup.html" class="text signup-text">Sign up </a>
+                    <span class="text">You already have acount ?
+                        <a href="./index.html" class="text signup-text">Login now </a>
                     </span>
                 </div>
 
@@ -48,5 +58,5 @@
     </div>
 
 </body>
-<script src = './script.js' ></script>
+<script src = './script.js'></script>
 </html>

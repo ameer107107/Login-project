@@ -15,7 +15,9 @@ def save_data():
 
 
 def rest_attempt():
+    data["login_activity"]["total_attempts"] = 0
     data["login_activity"]["failed_attempts"] = 0
+    data["login_activity"]["successful_attempts"] = 0
     save_data()
 
 
@@ -73,8 +75,14 @@ def calculate_risk(user_name,check_name,password_result
     elif login_failed <= 5:
         risk += 2
 
-    else:
+    elif login_failed <= 8:
+        risk += 3
+
+    elif login_failed <= 10:
         risk += 4
+
+    else:
+        risk += 10
 
     if attempts <= 3:
         risk += 0
@@ -96,7 +104,8 @@ def make_decision(risk):
         block()
 
     elif risk >=5:
-        print("OTP Required 🔐")
+        print("There is ERROR in th email or password. 🔐")
+        faild_attempt()
 
     else:
         print("succeeded ✅")
@@ -141,4 +150,4 @@ if not user_active:
 else:
     risk = calculate_risk(user_name, check_name, password_result, login_failed, attempts)
     make_decision(risk)
-    print(risk)
+
