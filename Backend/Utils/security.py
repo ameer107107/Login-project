@@ -1,12 +1,30 @@
 import json
 import bcrypt
+import security_utilss as ut
+
 
 with open("../data.json","r") as file:
     data = json.load(file)
 
+# user info from the UI
+input_User={
+
+    "user_name":"karar123",
+    "user_email":"karar554@gmail.com",
+    "user_phone":"+9647779830399",
+    "user_password":"1234567",
+
+}
 
 
-# function
+# input info
+check_name = input_User["user_name"]
+check_password = input_User["user_password"].encode()
+check_email = input_User["user_email"]
+check_phone = input_User["user_phone"]
+
+with open("../data.json","r") as file:
+    data = json.load(file)
 
 
 def save_data():
@@ -35,27 +53,23 @@ def successful_attempt():
 def block():
     data["user"]["account_status"] = False
     save_data()
+    return {
+        "account_status":data["user"]["account_status"]
+
+            }
 
 def remove_block():
     data["user"]["account_status"] = True
     save_data()
+    rest_attempt()
+    return {
+        "account_status": data["user"]["account_status"]
 
+    }
 
 def hash_password(password):
     return bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
 
-
-def create_user(username, email, phone, password):
-    user = {
-        "username": username,
-        "email": email,
-        "phone": phone,
-        "password": hash_password(password),
-        "account_status": True
-    }
-    data["user"] = user
-
-    save_data()
 
 
 def calculate_risk(user_name,check_name,password_result
@@ -63,11 +77,15 @@ def calculate_risk(user_name,check_name,password_result
     risk = 0
     if not password_result:
         risk += 5
-        faild_attempt()
 
-    if user_name != check_name:
+
+    elif user_name != check_name:
         risk += 1
-        faild_attempt()
+
+
+    if check_email != user_email:
+        risk += 5
+
 
     if login_failed <= 2:
         risk += 0
@@ -113,29 +131,12 @@ def make_decision(risk):
         successful_attempt()
 
 
-# user info from the UI
-input_User={
-
-    "user_name":"karar123",
-    "user_email":"karar554@gmail.com",
-    "user_phone":"+9647779830399",
-    "user_password":"1234567",
-
-}
-
-
-# input info
-check_name = input_User["user_name"]
-check_password = input_User["user_password"].encode()
-
-
 
 # data info
 user_name = data["user"]["username"]
 user_password = data["user"]["password"].encode()
 user_active = data["user"]["account_status"]
-
-
+user_email = data["user"]["email"]
 
 # activity info
 login_failed = data["login_activity"]["failed_attempts"]
