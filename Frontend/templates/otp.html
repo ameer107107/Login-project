@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="./otp.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/otp.css') }}">
   <title>نظام التحقق</title>
   
 </head>
@@ -13,7 +13,7 @@
 
     <p style="text-align: center; margin-bottom: 20px;">أدخل رمز التحقق المكون من 6 أرقام</p>
     
-    <div class="otp-inputs">
+    <div id = 'otp' class="otp-inputs">
       <input class="otp-box" type="text" maxlength="1" inputmode="numeric">
       <input class="otp-box" type="text" maxlength="1" inputmode="numeric">
       <input class="otp-box" type="text" maxlength="1" inputmode="numeric">
@@ -22,11 +22,11 @@
       <input class="otp-box" type="text" maxlength="1" inputmode="numeric">
     </div>
     
-    <button id="verifyOtpBtn">تحقق</button>
+    <button id="verifyOtpBtn"  onclick="verifyOTP()">تحقق</button>
 
     <div id="result" class="message hidden"></div>
   </div>
 
-  <script src = './otp.js'></script>
+  <script src="{{ url_for('static', filename='js/otp.js') }}"></script>
 </body>
 </html>

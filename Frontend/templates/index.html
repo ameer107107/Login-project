@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.2.0/css/line.css">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <title>Login Page</title>
 </head>
 <body>
@@ -28,7 +28,7 @@
                    </div>
 
                   <div class="input-field button">
-                        <button type="button" class="btn" onclick="window.location.href='signup.html'">
+                        <button type="button" class="btn" onclick="window.location.href='signup'">
                         Login Now
                         </button> 
                  </div>
@@ -37,7 +37,7 @@
 
                 <div class="login-signup">
                     <span class="text">Not a member ?
-                        <a href="./signup.html" class="text signup-text">Sign up </a>
+                        <a href="./signup" class="text signup-text">Sign up </a>
                     </span>
                 </div>
 
@@ -48,5 +48,6 @@
     </div>
 
 </body>
-<script src = './script.js' ></script>
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+<script src="{{ url_for('static', filename='js/index.js') }}"></script>
 </html>
