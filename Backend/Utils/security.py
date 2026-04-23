@@ -1,27 +1,36 @@
 import json
 import bcrypt
-import security_utilss as ut
+
 
 
 with open("../data.json","r") as file:
     data = json.load(file)
 
-# user info from the UI
-input_User={
 
-    "user_name":"karar123",
-    "user_email":"karar554@gmail.com",
-    "user_phone":"+9647779830399",
-    "user_password":"1234567",
+def use_data():
+    with open("../data.json", "r") as file:
+        data = json.load(file)
 
-}
+        user_name = data["user"]["username"]
+        user_password = data["user"]["password"].encode()
+        user_active = data["user"]["account_status"]
+        user_email = data["user"]["email"]
+
+        # activity info
+        login_failed = data["login_activity"]["failed_attempts"]
+        attempts = data["login_activity"]["total_attempts"]
+        return {
+            "user_name":user_name,
+            "user_email":user_email,
+            "user_password":user_password,
+            "user_active":user_active,
+            "login_failed":login_failed,
+            "attempts":attempts
+        }
 
 
 # input info
-check_name = input_User["user_name"]
-check_password = input_User["user_password"].encode()
-check_email = input_User["user_email"]
-check_phone = input_User["user_phone"]
+
 
 with open("../data.json","r") as file:
     data = json.load(file)
@@ -72,83 +81,98 @@ def hash_password(password):
 
 
 
-def calculate_risk(user_name,check_name,password_result
-                   ,login_failed,attempts):
+def calculate_risk(check_password,check_email):
+
+    enter_flag = False
     risk = 0
-    if not password_result:
-        risk += 5
+
+    data = use_data()
+    account_activ = data["user_active"]
+    password_result = bcrypt.checkpw(check_password.encode(),data["user_password"])
+    if account_activ:
+        if not password_result:
+            risk += 4
+            enter_flag = True
 
 
-    elif user_name != check_name:
-        risk += 1
+        if data["user_email"] != check_email:
+            risk += 3
+            enter_flag = True
 
 
-    if check_email != user_email:
-        risk += 5
+        if data["login_failed"] <= 2:
+            risk += 0
+
+        elif data["login_failed"] <= 5:
+            risk += 2
+
+        elif data["login_failed"] <= 8:
+            risk += 3
+
+        elif data["login_failed"] <= 10:
+            risk += 4
+
+        else:
+            risk += 10
+
+        if data["attempts"] <= 3:
+            risk += 0
+
+        elif data["attempts"] <= 4:
+            risk += 1
+
+        else:
+            risk += 3
 
 
-    if login_failed <= 2:
-        risk += 0
+    return risk,enter_flag,account_activ
 
-    elif login_failed <= 5:
-        risk += 2
 
-    elif login_failed <= 8:
-        risk += 3
+def make_decision(risk,enter_flag,account_activ):
+    if account_activ:
+        if risk >=10:
+            block()
+            print("Block")
+            return {
+                "account_status":False,
+                "risk":risk
+            }
 
-    elif login_failed <= 10:
-        risk += 4
+        elif enter_flag:
 
+            faild_attempt()
+            print("There is ERROR in th email or password. 🔐")
+            return {
+                "account_status": account_activ,
+                "msg":"There is ERROR in th email or password. 🔐",
+                "risk": risk
+            }
+
+        else:
+
+            rest_attempt()
+            successful_attempt()
+            print("succeeded")
+            return {
+                "account_status": account_activ,
+                "msg":"succeeded",
+                "risk": risk
+            }
     else:
-        risk += 10
-
-    if attempts <= 3:
-        risk += 0
-
-    elif attempts <= 4:
-        risk += 1
-
-    else:
-        risk += 3
+        print("you have been Blocked")
+        return {
+            "account_status":account_activ
+        }
 
 
-    return risk
+#check_name="karar123"
+check_password=1234567
+check_password = str(check_password)
+check_email="karar554@gmail.com"
 
+def returns(check_password,check_email):
+    risk,enter_flag,account_activ = calculate_risk(check_password,check_email)
+    result = make_decision(risk,enter_flag,account_activ)
+    return result
 
-def make_decision(risk):
-
-    if risk >=8:
-        print("Blocked ⛔")
-        block()
-
-    elif risk >=5:
-        print("There is ERROR in th email or password. 🔐")
-        faild_attempt()
-
-    else:
-        print("succeeded ✅")
-        rest_attempt()
-        successful_attempt()
-
-
-
-# data info
-user_name = data["user"]["username"]
-user_password = data["user"]["password"].encode()
-user_active = data["user"]["account_status"]
-user_email = data["user"]["email"]
-
-# activity info
-login_failed = data["login_activity"]["failed_attempts"]
-attempts = data["login_activity"]["total_attempts"]
-
-password_result = bcrypt.checkpw(check_password, user_password)
-
-# info test
-if not user_active:
-    print("you have been blocked contact support for help 🔐")
-
-else:
-    risk = calculate_risk(user_name, check_name, password_result, login_failed, attempts)
-    make_decision(risk)
-
+returns(check_password,check_email)
