@@ -29,8 +29,6 @@ def use_data():
         }
 
 
-# input info
-
 
 with open("../data.json","r") as file:
     data = json.load(file)
