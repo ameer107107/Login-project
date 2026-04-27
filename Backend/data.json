@@ -1,3 +1,18 @@
 {
-    "users": []
+    "users": [
+        {
+            "firstname": "AMEER",
+            "lastname": "MOHAMED",
+            "email": "ameeralsaadi768@gmail.com",
+            "password": "123",
+            "account_state": true
+        },
+        {
+            "firstname": "ameer",
+            "lastname": "qwert",
+            "email": "ameeralsaadi76@gmail.com",
+            "password": "123",
+            "account_state": true
+        }
+    ]
 }

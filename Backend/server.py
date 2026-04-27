@@ -1,3 +1,5 @@
+
+
 from flask import Flask, render_template, request, jsonify
 from flask_cors import CORS
 from Utils.otp import generate_otp, send_otp_email
@@ -88,6 +90,7 @@ def verify_otp():
                 user_data["password"]
             )
         user.add_to_list()
+        
         print("المستخدمون في القائمة حالياً:", len(User.users_list))
 
         del pending_users[email]
@@ -97,5 +100,9 @@ def verify_otp():
     else:
         return jsonify({"status": "error", "message": "رمز OTP غير صحيح"}), 400
 
+
+
+
+
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, use_reloader=False)
