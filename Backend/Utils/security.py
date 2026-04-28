@@ -17,8 +17,8 @@ def use_data():
         user_email = data["user"]["email"]
 
         # activity info
-        login_failed = data["login_activity"]["failed_attempts"]
-        attempts = data["login_activity"]["total_attempts"]
+        login_failed = data["user"]["failed_attempts"]
+        attempts = data["user"]["total_attempts"]
         return {
             "user_name":user_name,
             "user_email":user_email,
@@ -40,20 +40,20 @@ def save_data():
 
 
 def rest_attempt():
-    data["login_activity"]["total_attempts"] = 0
-    data["login_activity"]["failed_attempts"] = 0
-    data["login_activity"]["successful_attempts"] = 0
+    data["user"]["total_attempts"] = 0
+    data["user"]["failed_attempts"] = 0
+    data["user"]["successful_attempts"] = 0
     save_data()
 
 
 def faild_attempt():
-    data["login_activity"]["failed_attempts"] += 1
-    data["login_activity"]["total_attempts"] += 1
+    data["user"]["failed_attempts"] += 1
+    data["user"]["total_attempts"] += 1
     save_data()
 
 def successful_attempt():
-    data["login_activity"]["successful_attempts"] += 1
-    data["login_activity"]["total_attempts"] += 1
+    data["user"]["successful_attempts"] += 1
+    data["user"]["total_attempts"] += 1
     save_data()
 
 
@@ -78,15 +78,17 @@ def hash_password(password):
     return bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
 
 
-
-def calculate_risk(check_password,check_email):
+def calculate_risk(input_password,check_email):
 
     enter_flag = False
     risk = 0
 
     data = use_data()
+
     account_activ = data["user_active"]
-    password_result = bcrypt.checkpw(check_password.encode(),data["user_password"])
+
+    password_result = bcrypt.checkpw(input_password.encode(),data["user_password"])
+
     if account_activ:
         if not password_result:
             risk += 4
