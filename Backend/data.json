@@ -4,15 +4,21 @@
             "firstname": "AMEER",
             "lastname": "MOHAMED",
             "email": "ameeralsaadi768@gmail.com",
-            "password": "123",
-            "account_state": true
+            "password": "$2b$12$SoM8hDuSsJwlc/HmqgZio.zV5s4yM49Strd0.3hx.dNLeBmjYkzRi",
+            "account_state": true,
+            "total_attempts": 0,
+            "failed_attempts": 0,
+            "successful_attempts": 0
         },
         {
             "firstname": "ameer",
             "lastname": "qwert",
             "email": "ameeralsaadi76@gmail.com",
-            "password": "123",
-            "account_state": true
+            "password": "$2b$12$4payg1/zSAe5Rd0iYRQMCekOePQCxzS01YIXtmfT6aqVrnwKnR3HO",
+            "account_state": true,
+            "total_attempts": 0,
+            "failed_attempts": 0,
+            "successful_attempts": 0
         }
     ]
 }
