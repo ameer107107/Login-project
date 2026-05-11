@@ -61,9 +61,6 @@ class User:
             "password": self.password,
             "account_state": self.account_state,
 
-            "total_attempts": self.total_attempts,
-            "failed_attempts": self.failed_attempts,
-            "successful_attempts": self.successful_attempts
         }
 
     def display_user(self):
@@ -94,10 +91,6 @@ class User:
                                    u["lastname"],
                                    u["email"],
                                    u["password"],
-                                   u.get("account_state", True),
-                                   u.get("total_attempts", 0),
-                                   u.get("failed_attempts", 0),
-                                   u.get("successful_attempts", 0)
                                    )
 
                         cls.users_list.append(user)
