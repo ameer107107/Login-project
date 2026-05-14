@@ -10,13 +10,7 @@ class User:
         self.firstname = firstname
         self.lastname = lastname
         self.email = email
-        if password.startswith("$2b$"):
-            #  جاي من JSON (مشفر)
-            self.password = password
-        else:
-            #  مستخدم جديد
-            self.password = User.hashing(password)
-
+        self.password = password
         self.account_state = account_state
 
     @classmethod
