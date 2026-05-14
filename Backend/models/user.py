@@ -4,19 +4,9 @@ import bcrypt
 
 
 class User:
-
-    @staticmethod
-    def hashing(password):
-        return bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
-
     users_list = []
 
-    def __init__(self, firstname, lastname, email, password,
-                 account_state=True,
-                 total_attempts=0,
-                 failed_attempts=0,
-                 successful_attempts=0):
-
+    def init(self, firstname, lastname, email, password, account_state=True):
         self.firstname = firstname
         self.lastname = lastname
         self.email = email
@@ -28,11 +18,6 @@ class User:
             self.password = User.hashing(password)
 
         self.account_state = account_state
-
-        # الحقول الجديدة
-        self.total_attempts = total_attempts
-        self.failed_attempts = failed_attempts
-        self.successful_attempts = successful_attempts
 
     @classmethod
     def email_exists(cls, email):
@@ -59,8 +44,7 @@ class User:
             "lastname": self.lastname,
             "email": self.email,
             "password": self.password,
-            "account_state": self.account_state,
-
+            "account_state": self.account_state
         }
 
     def display_user(self):

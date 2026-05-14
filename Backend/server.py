@@ -1,10 +1,7 @@
-
-
 from flask import Flask, render_template, request, jsonify
 from flask_cors import CORS
 from Utils.otp import generate_otp, send_otp_email
 from models.user import User
-from Utils.security import returns
 
 app = Flask(__name__, template_folder='../Frontend/templates',
             static_folder='../Frontend/static')
@@ -40,26 +37,13 @@ def login_api():
     email = data.get("email")
     password = data.get("password")
 
-    x = returns(password, email)
-    account_status = x["account_status"]
-    msg = x["msg"]
-    if not account_status:
-        return jsonify({"status": "error", "message": "You have been blocked contact support"}), 401
+    if not email or not password:
+        return jsonify({"status": "error", "message": "Email and password are required"}), 400
 
-    elif msg == "succeeded":
+    if User.verify_credentials(email, password):
         return jsonify({"status": "success", "message": "Login successful"}), 200
-
     else:
-        return jsonify({"status": "error", "message": msg}), 401
-
-
-#    if not email or not password:
-#       return jsonify({"status": "error", "message": "Email and password are required"}), 400
-
-#    if User.verify_credentials(email, password):
-#       return jsonify({"status": "success", "message": "Login successful"}), 200
-#   else:
-#       return jsonify({"status": "error", "message": "الإيميل أو كلمة المرور غير صحيحة"}), 401
+        return jsonify({"status": "error", "message": "الإيميل أو كلمة المرور غير صحيحة"}), 401
 
 
 @app.route("/send-otp", methods=["POST"])
