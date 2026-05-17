@@ -1,5 +1,5 @@
 
-from flask import Flask, render_template, request, jsonify, session, redirect, url_for
+from flask import Flask, render_template, request, jsonify
 from flask_cors import CORS
 from Utils.otp import generate_otp, send_otp_email
 from models.user import User

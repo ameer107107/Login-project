@@ -46,7 +46,8 @@ def calculate_risk(user,check_password,check_email):
 
         password_result = bcrypt.checkpw(
             check_password.encode(),
-            user.password)
+            user.password.encode()
+        )
 
         if not password_result:
             risk += 4
