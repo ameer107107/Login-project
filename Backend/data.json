@@ -4,14 +4,21 @@
             "firstname": "AMEER",
             "lastname": "MOHAMED",
             "email": "ameeralsaadi768@gmail.com",
-            "password": "123",
+            "password": "$2b$12$HXX0t1dOT2mQeHVHMD9W2ucDOX4otrAhHi2pfQanwtz/Xn9piwzV6",
             "account_state": true
         },
         {
             "firstname": "ameer",
             "lastname": "qwert",
             "email": "ameeralsaadi76@gmail.com",
-            "password": "123",
+            "password": "$2b$12$SDVsEcmoPEmhFN8H0E3QWuluLDkYxd7VdB3pHxNlrVsQ8lFCZ0aVS",
+            "account_state": true
+        },
+        {
+            "firstname": "aa",
+            "lastname": "MUDER",
+            "email": "mudath50@gmail.com",
+            "password": "$2b$12$Mp8h1xEhyvTYQLn4myAuHuyz2ritWGPYK3idkgQZ7oKlObi5nPl/.",
             "account_state": true
         }
     ]

@@ -1,5 +1,5 @@
 
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, session, redirect, url_for
 from flask_cors import CORS
 from Utils.otp import generate_otp, send_otp_email
 from models.user import User
@@ -32,18 +32,45 @@ def welcome():
 
 @app.route("/login-api", methods=["POST"])
 def login_api():
+    #بيانت ال front end
     data = request.get_json()
     email = data.get("email")
     password = data.get("password")
 
+    result = User.security(email, password)
+
     if not email or not password:
-        return jsonify({"status": "error", "message": "Email and password are required"}), 400
+        return jsonify({
+            "status": "error",
+            "message": "Email and password are required"
+        }), 400
 
-    if User.verify_credentials(email, password):
-        return jsonify({"status": "success", "message": "Login successful"}), 200
-    else:
-        return jsonify({"status": "error", "message": "الإيميل أو كلمة المرور غير صحيحة"}), 401
+    if result.get("account_state") == False:
+        return jsonify({
+            "status": "blocked",
+            "message": result.get("msg", "Account blocked"),
+            "risk": result.get("risk", 0)
+        }), 403
 
+    if result.get("msg") == "Incorrect User":
+        return jsonify({
+            "status": "error",
+            "message": "Incorrect email or password"
+        }), 401
+
+    if result.get("msg") == "There is wrong in the email or password.":
+        return jsonify({
+            "status": "error",
+            "message": "Incorrect email or password",
+            "risk": result.get("risk")
+        }), 401
+
+    if result.get("msg") == "succeeded":
+        return jsonify({
+            "status": "success",
+            "message": "Login successful",
+            "risk": result.get("risk")
+        }), 200
 
 
 @app.route("/send-otp", methods=["POST"])

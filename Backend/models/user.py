@@ -1,17 +1,47 @@
 import json
 import atexit
 import bcrypt
-
+from Utils.security import returns
 
 class User:
     users_list = []
 
-    def __init__(self, firstname, lastname, email, password, account_state=True):
+    @classmethod
+    def security(cls,check_email,check_password):
+
+        for user in cls.users_list:
+            if user.email == check_email:
+
+                returns(user,check_password,check_email)
+
+        return {
+            "msg":"Incorrect User"
+                }
+
+
+    def __init__(self, firstname, lastname, email,
+                 password,account_state=True,
+                 total_attempts = 0,
+                 failed_attempts = 0,
+                 successful_attempts = 0):
+
         self.firstname = firstname
         self.lastname = lastname
         self.email = email
-        self.password = password
         self.account_state = account_state
+
+        self.total_attempts = total_attempts
+        self.failed_attempts = failed_attempts
+        self.successful_attempts = successful_attempts
+
+        # إذا الباسورد جاي من json لا تعيد تشفيره
+        if password.startswith("$2b$") or password.startswith("$2a$"):
+            self.password = password
+        else:
+            self.password = bcrypt.hashpw(
+                password.encode(),
+                bcrypt.gensalt()
+            ).decode()
 
     @classmethod
     def email_exists(cls, email):
@@ -23,8 +53,11 @@ class User:
     @classmethod
     def verify_credentials(cls, email, password):
         for user in cls.users_list:
-            if user.email == email and user.password == password:
-                return True
+            if user.email == email:
+                return bcrypt.checkpw(
+                    password.encode(),
+                    user.password.encode()
+                )
         return False
 
     def add_to_list(self):
@@ -68,6 +101,7 @@ class User:
                         cls.users_list.append(user)
         except (FileNotFoundError, json.JSONDecodeError):
             pass
+
 
 
 User.load_from_json()

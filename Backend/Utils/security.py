@@ -1,145 +1,97 @@
-import json
 import bcrypt
-import os
-
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DATA_PATH = os.path.join(BASE_DIR, "..", "data.json")
-
-with open(DATA_PATH, "r") as file:
-    data = json.load(file)
 
 
-def use_data(check_email):
-    with open(DATA_PATH, "r") as file:
-        data = json.load(file)
+def rest_attempt(user):
 
-        for user in data["users"]:
-            if user["email"] == check_email:
-                return {
-                    "user_name": user["firstname"],
-                    "user_email": user["email"],
-                    "user_password": user["password"].encode(),
-                    "user_active": user["account_state"],
-                    "login_failed": user.get("failed_attempts", 0),
-                    "attempts": user.get("total_attempts", 0)
-                }
-    return None
+    user.total_attempts = 0
+    user.failed_attempts = 0
+    user.successful_attempts = 0
 
 
 
-def save_data():
-    with open(DATA_PATH, "w") as file:
-        json.dump(data, file, indent=4)
+
+def faild_attempt(user):
+
+    user.failed_attempts += 1
+    user.total_attempts += 1
 
 
-def rest_attempt(email):
-    for user in data["users"]:
-        if user["email"] == email:
-            user["total_attempts"] = 0
-            user["failed_attempts"] = 0
-            user["successful_attempts"] = 0
-            break
-    save_data()
+def successful_attempt(user):
+
+    user.successful_attempts += 1
+    user.total_attempts += 1
 
 
-def faild_attempt(email):
-    for user in data["users"]:
-        if user["email"] == email:
-            user["failed_attempts"] += 1
-            user["total_attempts"] += 1
-            break
-    save_data()
+def block(user):
 
-def successful_attempt(email):
-    for user in data["users"]:
-        if user["email"] == email:
-            user["successful_attempts"] += 1
-            user["total_attempts"] += 1
-            break
-    save_data()
+    user.account_state = False
 
 
-def block(email):
-    for user in data["users"]:
-        if user["email"] == email:
-            user["account_state"] = False
-            break
-    save_data()
-    return {
-        "account_state":False
 
-            }
+def remove_block(user):
 
-def remove_block(email):
-    for user in data["users"]:
-        if user["email"] == email:
-            user["account_state"] = True
-            break
-    save_data()
-    rest_attempt(email)
-    return {"account_state": True}
-
-def hash_password(password):
-    return bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
+    user.account_state = True
 
 
-def calculate_risk(input_password,check_email):
+
+
+
+def calculate_risk(user,check_password,check_email):
 
     enter_flag = False
     risk = 0
 
-    data = use_data(check_email)
 
-    account_activ = data["user_active"]
+    if user.account_state:
 
-
-    if account_activ:
-
-        password_result = bcrypt.checkpw(input_password.encode(), data["user_password"])
+        password_result = bcrypt.checkpw(
+            check_password.encode(),
+            user.password)
 
         if not password_result:
             risk += 4
             enter_flag = True
 
 
-        if data["user_email"] != check_email:
-            risk += 3
+        if user.email != check_email:
+            risk += 4
             enter_flag = True
 
 
-        if data["login_failed"] <= 2:
+        if user.failed_attempts <= 2:
             risk += 0
 
-        elif data["login_failed"] <= 5:
+        elif user.failed_attempts <= 5:
             risk += 2
 
-        elif data["login_failed"] <= 8:
+        elif user.failed_attempts <= 8:
             risk += 3
 
-        elif data["login_failed"] <= 10:
+        elif user.failed_attempts <= 10:
             risk += 4
 
         else:
             risk += 10
 
-        if data["attempts"] <= 3:
+        if user.total_attempts <= 3:
             risk += 0
 
-        elif data["attempts"] <= 4:
+        elif user.total_attempts <= 4:
             risk += 1
 
         else:
             risk += 3
 
 
-    return risk,enter_flag,account_activ
+    return risk,enter_flag
 
 
-def make_decision(risk,enter_flag,account_activ,email):
-    if account_activ:
+def make_decision(user,risk,enter_flag):
+    if user.account_state:
         if risk >=10:
-            block(email)
+            block(user)
             print("Block")
+
             return {
                 "account_state":False,
                 "risk":risk
@@ -147,39 +99,56 @@ def make_decision(risk,enter_flag,account_activ,email):
 
         elif enter_flag:
 
-            faild_attempt(email)
-            print("There is ERROR in th email or password. 🔐")
+            faild_attempt(user)
+
+            print("There is wrong in th email or password.")
+
             return {
-                "account_state": account_activ,
-                "msg":"There is ERROR in th email or password. 🔐",
+                "account_state": user.account_state,
+                "msg":"There is wrong in the email or password.",
                 "risk": risk
             }
 
         else:
 
-            rest_attempt(email)
-            successful_attempt(email)
+            rest_attempt(user)
+            successful_attempt(user)
+
             print("succeeded")
+
             return {
-                "account_state": account_activ,
+                "account_state": user.account_state,
                 "msg":"succeeded",
                 "risk": risk
             }
     else:
         print("you have been Blocked")
         return {
-            "account_state":account_activ
+            "account_state":False,
+            "msg":"you have been Blocked"
         }
 
 
-#check_name="karar123"
-check_password=1234567
-check_password = str(check_password)
-check_email="karar554@gmail.com"
 
-def returns(check_password,check_email):
-    risk,enter_flag,account_activ = calculate_risk(check_password,check_email)
-    result = make_decision(risk,enter_flag,account_activ,check_email)
-    return result
 
-returns(check_password,check_email)
+def returns(user,check_password,check_email,):
+
+    if not user.account_state:
+        return {
+            "account_state": False,
+            "msg": "you have been blocked"
+        }
+    else:
+        risk,enter_flag = calculate_risk(
+            user,
+            check_password,
+            check_email,
+        )
+
+        result = make_decision(
+            user,
+            risk,
+            enter_flag,
+            )
+    
+        return result
